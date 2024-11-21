@@ -1,10 +1,4 @@
-#!/usr/bin/env python
-# coding: utf-8
-
 # # Import Statements
-
-# In[1]:
-
 
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -28,9 +22,6 @@ from sklearn.model_selection import cross_val_predict
 
 # # Loading in Dataset
 
-# In[2]:
-
-
 #Dataset link : https://www.kaggle.com/datasets/clovisdalmolinvieira/us-housing-trends-values-time-and-price-cuts
 file_path = "/Users/otsok/Downloads/USRealEstateTrends.csv"
 data = pd.read_csv(file_path)
@@ -40,9 +31,6 @@ city_coords = pd.read_csv("/Users/otsok/Downloads/simplemaps_uscities_basicv1.79
 
 
 # # Pre-Processing and Cleaning
-
-# In[3]:
-
 
 # Check the percentage of missing values in each column
 missing_percentage = data.isnull().mean() * 100
@@ -59,10 +47,6 @@ if 'RegionName' not in data_cleaned.columns:
 # Fill remaining missing values with the mean in numeric columns only
 numeric_cols = data_cleaned.select_dtypes(include=[np.number]).columns
 data_cleaned[numeric_cols] = data_cleaned[numeric_cols].fillna(data_cleaned[numeric_cols].mean())
-
-
-# In[4]:
-
 
 # Print column names to verify structure
 print("Columns in data_cleaned:", data_cleaned.columns)
@@ -97,9 +81,6 @@ else:
 
 
 # # 3D Modeling
-
-# In[5]:
-
 
 # Split 'RegionName' in 'data_cleaned' to create separate 'city' and 'state_id' columns
 data_cleaned[['city', 'state_id']] = data_cleaned['RegionName'].str.split(', ', expand=True)
@@ -177,9 +158,6 @@ else:
 
 # # City Level Plotting
 
-# In[6]:
-
-
 fig = px.scatter_mapbox(
     merged_data,
     lat="Latitude",
@@ -204,9 +182,6 @@ fig.show()
 
 
 # # Box and Whisper Plot (by state)
-
-# In[7]:
-
 
 import plotly.express as px
 
@@ -241,9 +216,6 @@ fig.show()
 
 # # State Rankings by % Growth
 
-# In[8]:
-
-
 # Select only columns related to home values over time
 home_value_columns = [col for col in data_cleaned.columns if "HomeValue" in col]
 
@@ -270,9 +242,6 @@ growth_df
 
 # # Percentage Growth in Housing Prices by State
 
-# In[9]:
-
-
 fig = px.choropleth(
     growth_df,
     locations='StateName',
@@ -292,9 +261,6 @@ fig.show()
 
 
 # # Average Home Value by State (May 2024)
-
-# In[10]:
-
 
 # Use the last column in the home value data (May 2024) to get the most recent average home values
 latest_home_values = data_cleaned[['StateName', '2024-05-HomeValue']].groupby('StateName').mean().reset_index()
@@ -320,9 +286,6 @@ fig.show()
 
 
 # # Regression Analysis of Home Value and Days Pending
-
-# In[11]:
-
 
 # Filter for columns with HomeValue and DaysPending across all months
 homevalue_columns = [col for col in data_cleaned.columns if "HomeValue" in col]
@@ -380,9 +343,6 @@ print(f"R² Score: {r2}")
 
 # # Time series analysis
 
-# In[12]:
-
-
 # Step 1: Prepare the time series data
 # Extract columns related to home values and strip out "HomeValue" to get just the date
 home_value_columns = [col for col in data_cleaned.columns if "HomeValue" in col]
@@ -417,13 +377,8 @@ plt.ylabel('Home Value (in 1000s $)')
 plt.legend()
 plt.show()
 
-# Optional: Print model summary
+# Print model summary
 print(fitted_model.summary())
-
-
-
-# In[13]:
-
 
 # Assuming 'data_cleaned' is your original DataFrame
 y = data_cleaned["2024-05-HomeValue"]
@@ -454,12 +409,6 @@ model.fit(X_train, y_train)
 predictions = model.predict(X_test)
 r2 = r2_score(y_test, predictions)
 print("R2 Score: ", r2)
-
-
-
-
-# In[44]:
-
 
 # Perform 5-fold cross-validation and calculate R^2 scores for each fold
 scores = cross_val_score(model, X_train, y_train, cv=5, scoring='r2', n_jobs=-1)
